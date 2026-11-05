@@ -1,28 +1,34 @@
 simhash-java
 ============
 
-A simple implementation of simhash algorithm by java.
+A simple implementation of simhash algorithm by java, managed by Maven.
 
 ### Features:<br />  
 1. compute the simhash of a string<br />  
-2. compute the similarity between all the strings by building smart index, so we can deal with big data.<br />  
+2. compute the similarity between two strings by hamming distance<br />  
+
+### How to build:
+- mvn package // build the jar and run the unit tests<br />  
 
 ### How to use:
-- run Main with inputfile and outputfile.<br />  
+```java
+IWordSeg wordSeg = new ChineseWordSeg(); // jieba analyzer for Chinese docs
+Simhash simhash = new Simhash(wordSeg);
 
-- The format of inputfile(see src/test_in): one doc eachline with the utf8 charset.<br />  
+long hash1 = simhash.simhash64("doc1");
+long hash2 = simhash.simhash64("doc2");
 
-- The format of outputfile(see src/test_out): <br />  
-- start //start flag<br />  
-- first line // doc<br />  
-- sencode lien // doc1\tdist where dist is the hamming distance between doc and doc1 <br />  
-- end //end flag<br />  
+int dist = simhash.hammingDistance(hash1, hash2);
+boolean nearDuplicate = dist <= 3;
+```
+<br />  
+
+### Dependencies:
+- jieba-analysis 1.0.2 (chinese word segmentation)<br />  
 
 ### Future:
-1. Build the project to a runnable jar.<br />  
-2. Improve the performace under big data.<br />  
+1. Improve the performace under big data.<br />  
 
 ### Note:
-1. Before run Main.java, you should choose a better analyzer instead of BinaryWordSeg!
-
-
+1. ChineseWordSeg(结巴分词) is the recommended analyzer for Chinese docs.<br />  
+2. Run unit tests with mvn test (see src/test/java).<br />  
