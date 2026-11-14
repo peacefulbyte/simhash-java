@@ -27,13 +27,19 @@ public class ChineseWordSeg implements IWordSeg {
 
 	@Override
 	public List<String> tokens(String doc) {
-		return segmenter.sentenceProcess(doc);
+		return tokens(doc, null);
 	}
 
 	@Override
 	public List<String> tokens(String doc, Set<String> stopWords) {
 		List<String> tokens = new ArrayList<String>();
 		for (String t : segmenter.sentenceProcess(doc)) {
+			// 空白 token 必须丢弃：正文去标点后残留的空格会被切成独立 token，
+			// 一篇稿件里重复出现几十次，权重会压倒正文词，导致无关稿件的
+			// simhash 指纹几乎相同（两篇不同主题的稿件汉明距离仅 1）。
+			if (t == null || t.trim().isEmpty()) {
+				continue;
+			}
 			if (stopWords == null || !stopWords.contains(t)) {
 				tokens.add(t);
 			}
@@ -42,3 +48,4 @@ public class ChineseWordSeg implements IWordSeg {
 	}
 
 }
+
